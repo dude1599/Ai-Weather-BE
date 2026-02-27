@@ -25,7 +25,7 @@ public class WeatherController {
 	private final KmaWeatherService kmaWeatherService;
 	private final AiWeatherService aiWeatherService;
 
-	@GetMapping("/weather")
+	@GetMapping("/")
 	public String showWeather(
 		@RequestParam(name = "region", required = false) String region,
 		Model model) {
