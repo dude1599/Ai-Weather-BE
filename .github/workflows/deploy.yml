@@ -44,7 +44,7 @@ jobs:
             sudo sync && echo 3 | sudo tee /proc/sys/vm/drop_caches
             
             # 3. 초경량 모드로 실행 (최대 메모리를 128MB로 극단적 제한)
-            # -Xmx128M: 서버가 죽지 않도록 메모리 사용량을 최소화합니다.
+            # -Xmx256M: 서버가 죽지 않도록 메모리 사용량을 최소화합니다.
             cd ~/Ai-Weather-BE/build/libs
             nohup java -Xms64M -Xmx128M -jar ai-weather-0.0.1-SNAPSHOT.jar > ~/deploy.log 2>&1 &
             
