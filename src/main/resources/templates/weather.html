@@ -77,6 +77,27 @@
             border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px auto;
         }
         .loading-text { color: #1a73e8; font-size: 15px; font-weight: 700; }
+        @media (max-width: 500px) {
+          body { padding-top: 20px; } /* 상단 여백 축소 */
+
+          .weather-card {
+            width: 92%; /* 화면 너비의 92%만 차지하도록 설정 */
+            padding: 30px 20px; /* 내부 여백 축소 */
+            margin-bottom: 30px;
+          }
+
+          .project-header h1 { font-size: 22px; } /* 제목 크기 축소 */
+
+          .search-box form {
+            flex-direction: column; /* 검색창과 버튼을 세로로 배치 */
+          }
+
+          input[type="text"] { width: 100%; box-sizing: border-box; } /* 입력창 꽉 차게 */
+          button { width: 100%; } /* 버튼 꽉 차게 */
+
+          .temp-main { font-size: 56px; } /* 온도 글자 크기 축소 */
+          .weather-icon { font-size: 54px; }
+        }
 
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
@@ -91,8 +112,8 @@
     </div>
 
     <div class="search-box">
-        <form action="/weather" method="get" onsubmit="showLoading()">
-            <input type="text" name="region" placeholder="주소 또는 지역명 입력 (예: 대전광역시 유성구, 강남역)" required>
+        <form action="/" method="get" onsubmit="showLoading()">
+            <input type="text" name="region" placeholder="주소 또는 지역명 입력 (예: 대전시 유성구, 강남역)" required>
             <button type="submit" id="searchBtn">검색</button>
         </form>
     </div>
