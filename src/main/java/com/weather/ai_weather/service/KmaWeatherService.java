@@ -8,6 +8,7 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
@@ -58,7 +59,7 @@ public class KmaWeatherService {
 	}
 
 	public Map<String, String> getWeatherNow(int nx, int ny) {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 		if (now.getMinute() < 40) {
 			now = now.minusHours(1);
 		}
@@ -115,7 +116,7 @@ public class KmaWeatherService {
 	}
 
 	public List<Map<String, String>> getWeatherForecast(int nx, int ny) {
-		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime now = LocalDateTime.now(ZoneId.of("Asia/Seoul"));
 		if (now.getMinute() < 45) {
 			now = now.minusHours(1);
 		}
