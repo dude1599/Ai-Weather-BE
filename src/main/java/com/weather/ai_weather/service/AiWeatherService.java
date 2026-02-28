@@ -38,7 +38,7 @@ public class AiWeatherService {
 	}
 
 	public AiWeatherResponse getAiWeather(AiWeatherRequest request) {
-		log.info("날씨 AI 분석을 위해 백엔드에 데이터를 요청합니다.");
+		log.info("날씨 AI 분석을 위해 AI 엔진 서버에 데이터를 요청합니다.");
 		try {
 			return restClient.post()
 				.uri("/api/ai-weather")

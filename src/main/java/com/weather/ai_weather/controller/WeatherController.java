@@ -45,12 +45,14 @@ public class WeatherController {
 		int[] grid = KmaCoordinateConverter.convertToGrid(lat, lon);
 		Map<String, String> current = kmaWeatherService.getWeatherNow(grid[0], grid[1]);
 		List<Map<String, String>> forecast = kmaWeatherService.getWeatherForecast(grid[0], grid[1]);
+
 		AiWeatherService.AiWeatherRequest aiRequest = new AiWeatherService.AiWeatherRequest();
 		aiRequest.setLat(lat);
 		aiRequest.setLon(lon);
 		aiRequest.setCurrent(current);
 		aiRequest.setForecast(forecast);
 		AiWeatherService.AiWeatherResponse aiResponse = aiWeatherService.getAiWeather(aiRequest);
+
 		String displayName = (locationInfo.getPlace_name() != null && !locationInfo.getPlace_name().isEmpty())
 			? locationInfo.getPlace_name() : locationInfo.getAddress_name();
 
@@ -64,6 +66,44 @@ public class WeatherController {
 			model.addAttribute("aiAdvice", aiResponse.getAiAdvice());
 		}
 
+		String weatherIcon = determineWeatherIcon(current, forecast);
+		model.addAttribute("weatherIcon", weatherIcon);
+
 		return "weather";
+	}
+
+	private String determineWeatherIcon(Map<String, String> current, List<Map<String, String>> forecast) {
+		if (current == null) return "🌤️";
+
+		// 1. 현재 실황(current)에서 강수 상태(PTY) 최우선 확인
+		String pty = current.getOrDefault("pty", "없음");
+		if (pty.contains("비") || pty.contains("빗방울")) {
+			return "🌧️";
+		}
+		if (pty.contains("눈")) {
+			return "❄️";
+		}
+
+		// 2. 현재 비/눈이 안 온다면, 가장 가까운 시간의 예보(forecast)에서 하늘 상태(SKY) 확인
+		if (forecast != null && !forecast.isEmpty()) {
+			Map<String, String> firstForecast = forecast.getFirst();
+
+			// 혹시 30분 뒤 예보에 당장 비가 있다면 비 아이콘 표출
+			String forecastPty = firstForecast.getOrDefault("pty", "없음");
+			if (forecastPty.contains("비") || forecastPty.contains("빗방울")) return "🌧️";
+			if (forecastPty.contains("눈")) return "❄️";
+
+			// 강수가 없다면 구름 양에 따라 아이콘 결정
+			String sky = firstForecast.getOrDefault("sky", "맑음");
+			if (sky.contains("흐림")) {
+				return "☁️";
+			} else if (sky.contains("구름많음")) {
+				return "⛅";
+			} else if (sky.contains("맑음")) {
+				return "☀️";
+			}
+		}
+
+		return "🌤️";
 	}
 }

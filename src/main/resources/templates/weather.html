@@ -1,190 +1,162 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 날씨 비서</title>
-    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
-    <style>
-        body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; text-align: center; margin: 0; padding-top: 50px; background-color: #f0f2f5; color: #333; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 날씨 비서</title>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+  <style>
+    body { font-family: 'Pretendard', 'Malgun Gothic', sans-serif; text-align: center; margin: 0; padding-top: 50px; background-color: #f0f2f5; color: #333; }
 
-        .weather-card {
-            background: white; max-width: 480px; margin: 0 auto 50px auto; padding: 40px 30px;
-            border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
+    .weather-card {
+      background: white; max-width: 480px; margin: 0 auto 50px auto; padding: 40px 30px;
+      border-radius: 24px; box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    }
 
-        .project-header { margin-bottom: 35px; }
-        .project-header h1 { font-size: 26px; color: #1a73e8; margin: 0 0 10px 0; font-weight: 800; }
-        .project-header p { font-size: 15px; color: #666; margin: 0; line-height: 1.5; word-break: keep-all; }
+    .project-header { margin-bottom: 35px; }
+    .project-header h1 { font-size: 26px; color: #1a73e8; margin: 0 0 10px 0; font-weight: 800; }
+    .project-header p { font-size: 15px; color: #666; margin: 0; line-height: 1.5; word-break: keep-all; }
 
-        .search-box {
-            margin-bottom: 40px;
-            display: flex;
-            justify-content: center;
-        }
-        .search-box form {
-            display: flex;
-            gap: 10px;
-            width: 100%;
-        }
-        input[type="text"] {
-            flex: 1;
-            padding: 14px 18px; border: 2px solid #e0e0e0; background-color: #f9f9f9;
-            border-radius: 12px; font-size: 15px; outline: none; transition: all 0.3s ease; color: #333;
-        }
-        input[type="text"]:focus { border-color: #1a73e8; background-color: #fff; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
-        input[type="text"]::placeholder { color: #aaa; }
-        button {
-            flex-shrink: 0;
-            padding: 14px 24px; background-color: #1a73e8; color: white;
-            border: none; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 15px; transition: background 0.2s; white-space: nowrap;
-        }
-        button:hover { background-color: #1557b0; box-shadow: 0 4px 10px rgba(26,115,232,0.2); }
+    .search-box {
+      margin-bottom: 40px;
+      display: flex;
+      justify-content: center;
+    }
+    .search-box form {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+    input[type="text"] {
+      flex: 1;
+      padding: 14px 18px; border: 2px solid #e0e0e0; background-color: #f9f9f9;
+      border-radius: 12px; font-size: 15px; outline: none; transition: all 0.3s ease; color: #333;
+    }
+    input[type="text"]:focus { border-color: #1a73e8; background-color: #fff; box-shadow: 0 0 0 3px rgba(26,115,232,0.1); }
+    input[type="text"]::placeholder { color: #aaa; }
+    button {
+      flex-shrink: 0;
+      padding: 14px 24px; background-color: #1a73e8; color: white;
+      border: none; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 15px; transition: background 0.2s; white-space: nowrap;
+    }
+    button:hover { background-color: #1557b0; box-shadow: 0 4px 10px rgba(26,115,232,0.2); }
 
-        .error-box {
-            color: #c53030;
-            background-color: #fff5f5;
-            border: 1px solid #fed7d7;
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        .error-icon { font-size: 18px; }
+    .error-box {
+      color: #c53030;
+      background-color: #fff5f5;
+      border: 1px solid #fed7d7;
+      border-radius: 12px;
+      padding: 15px 20px;
+      margin-bottom: 30px;
+      font-size: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .error-icon { font-size: 18px; }
 
-        .location { font-size: 18px; color: #444; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .weather-main { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 30px 0; }
-        .temp-main { font-size: 72px; font-weight: 900; color: #ff8c00; line-height: 1; }
-        .temp-unit { font-size: 36px; font-weight: 400; color: #ff8c00; }
-        .weather-icon { font-size: 64px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); animation: float 3s ease-in-out infinite; }
+    .location { font-size: 18px; color: #444; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+    .weather-main { display: flex; align-items: center; justify-content: center; gap: 20px; margin: 30px 0; }
+    .temp-main { font-size: 72px; font-weight: 900; color: #ff8c00; line-height: 1; }
+    .temp-unit { font-size: 36px; font-weight: 400; color: #ff8c00; }
+    .weather-icon { font-size: 64px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); animation: float 3s ease-in-out infinite; }
 
-        .ai-section {
-            margin-top: 35px; padding: 25px 30px; background: linear-gradient(135deg, #f6faff, #eef6fc);
-            border-radius: 18px; text-align: left; border: 1px solid #e0eaf5;
-        }
-        .ai-title { font-weight: 700; color: #1a73e8; font-size: 17px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .ai-content { font-size: 15px; color: #333; line-height: 1.7; word-break: keep-all; letter-spacing: -0.3px; }
+    .ai-section {
+      margin-top: 35px; padding: 25px 30px; background: linear-gradient(135deg, #f6faff, #eef6fc);
+      border-radius: 18px; text-align: left; border: 1px solid #e0eaf5;
+    }
+    .ai-title { font-weight: 700; color: #1a73e8; font-size: 17px; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
+    .ai-content { font-size: 15px; color: #333; line-height: 1.7; word-break: keep-all; letter-spacing: -0.3px; }
 
-        #loading { display: none; margin-top: 20px; }
-        .spinner {
-            width: 45px; height: 45px; border: 5px solid #f3f3f3; border-top: 5px solid #1a73e8;
-            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px auto;
-        }
-        .loading-text { color: #1a73e8; font-size: 15px; font-weight: 700; }
-        @media (max-width: 500px) {
-          body { padding-top: 20px; } /* 상단 여백 축소 */
+    #loading { display: none; margin-top: 20px; }
+    .spinner {
+      width: 45px; height: 45px; border: 5px solid #f3f3f3; border-top: 5px solid #1a73e8;
+      border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 20px auto;
+    }
+    .loading-text { color: #1a73e8; font-size: 15px; font-weight: 700; }
+    @media (max-width: 500px) {
+      body { padding-top: 20px; }
 
-          .weather-card {
-            width: 92%; /* 화면 너비의 92%만 차지하도록 설정 */
-            padding: 30px 20px; /* 내부 여백 축소 */
-            margin-bottom: 30px;
-          }
+      .weather-card {
+        width: 92%;
+        padding: 30px 20px;
+        margin-bottom: 30px;
+      }
 
-          .project-header h1 { font-size: 22px; } /* 제목 크기 축소 */
+      .project-header h1 { font-size: 22px; }
+      .search-box form { flex-direction: column; }
+      input[type="text"] { width: 100%; box-sizing: border-box; }
+      button { width: 100%; }
+      .temp-main { font-size: 56px; }
+      .weather-icon { font-size: 54px; }
+    }
 
-          .search-box form {
-            flex-direction: column; /* 검색창과 버튼을 세로로 배치 */
-          }
-
-          input[type="text"] { width: 100%; box-sizing: border-box; } /* 입력창 꽉 차게 */
-          button { width: 100%; } /* 버튼 꽉 차게 */
-
-          .temp-main { font-size: 56px; } /* 온도 글자 크기 축소 */
-          .weather-icon { font-size: 54px; }
-        }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
-    </style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0px); } }
+  </style>
 </head>
 <body>
 
 <div class="weather-card">
-    <div class="project-header">
-        <h1>AI 날씨 비서</h1>
-        <p>실시간 기상 정보와 미래 예보를 분석해<br>상황에 맞는 맞춤형 조언을 제공합니다.</p>
+  <div class="project-header">
+    <h1>AI 날씨 비서</h1>
+    <p>실시간 기상 정보와 미래 예보를 분석해<br>상황에 맞는 맞춤형 조언을 제공합니다.</p>
+  </div>
+
+  <div class="search-box">
+    <form action="/" method="get" onsubmit="showLoading()">
+      <input type="text" name="region" placeholder="주소 또는 지역명 입력 (예: 대전시 유성구, 강남역)" required>
+      <button type="submit" id="searchBtn">검색</button>
+    </form>
+  </div>
+
+  <div th:if="${error}" class="error-box">
+    <span class="error-icon">주의</span>
+    <span th:text="${error}">오류 내용</span>
+  </div>
+
+  <div id="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">AI가 날씨 데이터를 분석하고 있습니다...</div>
+  </div>
+
+  <div id="resultArea" th:if="${location != null}">
+    <p class="location">위치: <span th:text="${location}">예) 서울 강남구 역삼동</span></p>
+
+    <div class="weather-main">
+      <div class="weather-icon" th:text="${weatherIcon != null ? weatherIcon : '🌤️'}">🌤️</div>
+
+      <div class="temp-main">
+        <span th:text="${temperature}">0</span><span class="temp-unit">°C</span>
+      </div>
     </div>
 
-    <div class="search-box">
-        <form action="/" method="get" onsubmit="showLoading()">
-            <input type="text" name="region" placeholder="주소 또는 지역명 입력 (예: 대전시 유성구, 강남역)" required>
-            <button type="submit" id="searchBtn">검색</button>
-        </form>
+    <div class="ai-section" th:if="${aiAdvice}">
+      <div class="ai-title"><span>AI 맞춤 날씨 조언</span></div>
+      <div class="ai-content">
+        <p th:text="${aiAdvice}">분석 결과가 여기에 표시됩니다.</p>
+      </div>
     </div>
-
-    <div th:if="${error}" class="error-box">
-        <span class="error-icon">주의</span>
-        <span th:text="${error}">오류 내용</span>
-    </div>
-
-    <div id="loading">
-        <div class="spinner"></div>
-        <div class="loading-text">AI가 날씨 데이터를 분석하고 있습니다...</div>
-    </div>
-
-    <div id="resultArea" th:if="${location != null}">
-        <p class="location">위치: <span th:text="${location}">예) 서울 강남구 역삼동</span></p>
-
-        <div class="weather-main">
-            <div class="weather-icon" id="dynamicIcon">☀️</div>
-            <div class="temp-main">
-                <span th:text="${temperature}">0</span><span class="temp-unit">°C</span>
-            </div>
-        </div>
-
-        <div class="ai-section" th:if="${aiAdvice}">
-            <div class="ai-title"><span>AI 맞춤 날씨 조언</span></div>
-            <div id="aiText" style="display: none;" th:text="${aiAdvice}"></div>
-            <div class="ai-content">
-                <p th:text="${aiAdvice}">분석 결과가 여기에 표시됩니다.</p>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>
 
 <script>
-    function showLoading() {
-        var resultArea = document.getElementById('resultArea');
-        var errorBox = document.querySelector('.error-box');
-        if (resultArea) resultArea.style.display = 'none';
-        if (errorBox) errorBox.style.display = 'none';
+  function showLoading() {
+    var resultArea = document.getElementById('resultArea');
+    var errorBox = document.querySelector('.error-box');
+    if (resultArea) resultArea.style.display = 'none';
+    if (errorBox) errorBox.style.display = 'none';
 
-        document.getElementById('loading').style.display = 'block';
+    document.getElementById('loading').style.display = 'block';
 
-        var btn = document.getElementById('searchBtn');
-        btn.innerText = '분석 중...';
-        btn.style.opacity = '0.7';
-        btn.disabled = true;
-    }
-
-    window.onload = function() {
-        var aiTextElement = document.getElementById('aiText');
-        var iconElement = document.getElementById('dynamicIcon');
-
-        if (!aiTextElement || !iconElement) {
-            return;
-        }
-
-      var text = aiTextElement.innerText;
-
-      if (text.includes('비가') || text.includes('비 소식') || text.includes('소나기') || text.includes('우산')) {
-        iconElement.innerText = '🌧️';
-      } else if (text.includes('눈이') || text.includes('폭설') || text.includes('눈 소식')) {
-        iconElement.innerText = '❄️';
-      } else if (text.includes('흐림') || text.includes('구름') || text.includes('흐려')) {
-        iconElement.innerText = '☁️';
-      } else if (text.includes('맑음') || text.includes('좋은 날씨') || text.includes('화창')) {
-        iconElement.innerText = '☀️';
-      } else {
-        iconElement.innerText = '🌤️';
-      }
-    }
+    var btn = document.getElementById('searchBtn');
+    btn.innerText = '분석 중...';
+    btn.style.opacity = '0.7';
+    btn.disabled = true;
+  }
 </script>
 
 </body>
